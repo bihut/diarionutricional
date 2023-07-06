@@ -56,6 +56,10 @@ def crearComida():
 @app.route("/comida/<nickname>/<starttime>/<endtime>",methods=["GET"])
 def obtenerComidas(nickname,starttime,endtime):
     try:
+        if nickname is None or starttime is None or endtime is None:
+            return {
+                       "message": "Datos incompletos"
+                   }, 400
         comidas = Comida().get_comida_by_time(nickname,starttime,endtime)
         print("Comidas "+str(comidas))
         if comidas:
@@ -66,7 +70,7 @@ def obtenerComidas(nickname,starttime,endtime):
         else:
             return {
                        "message": "No hay comidas de " + str(nickname)+" en la fecha indicada"
-                   }, 500
+                   }, 400
     except Exception as e:
         print("ERROR "+str(e))
         return {
@@ -76,6 +80,10 @@ def obtenerComidas(nickname,starttime,endtime):
 @app.route("/calorias/<nickname>/<starttime>/<endtime>",methods=["GET"])
 def obtenerCalorias(nickname,starttime,endtime):
     try:
+        if nickname is None or starttime is None or endtime is None:
+            return {
+                       "message": "Datos incompletos"
+                   }, 400
         calorias = Comida().get_calories_by_time(nickname,starttime,endtime)
 
         if calorias:
