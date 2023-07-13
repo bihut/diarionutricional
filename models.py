@@ -1,15 +1,14 @@
-"""Application Models"""
 import json
 import sys
 
 import bson, os
 import pymongo
-from dotenv import load_dotenv
+#from dotenv import load_dotenv
 from pymongo import MongoClient
 from werkzeug.security import generate_password_hash, check_password_hash
 import time
 
-load_dotenv()
+#load_dotenv()
 
 DATABASE_URL='mongodb://angel:123456@localhost:27017/?authMechanism=DEFAULT'
 client = MongoClient(DATABASE_URL)
@@ -19,12 +18,15 @@ class Usuario:
     def __init__(selfs):
         return
 
-    def create(self,nombre,peso,altura,nickname):
+    def create(self,nombre,edad,estatura, peso, genero, metabolismobasal,calorias):
         user = db.usuarios.insert_one({
             "nombre":nombre,
+            "edad":edad,
+            "estatura":estatura,
             "peso":peso,
-            "altura":altura,
-            "nickname":nickname
+            "genero":genero,
+            "metabolismobasal":metabolismobasal,
+            "calorias":calorias
         })
 
         return self.get_by_id(user.inserted_id)
@@ -35,18 +37,25 @@ class Usuario:
         user["_id"] = str(user["_id"])
         return user
 
+    def get_by_name(self, name):
+        user = db.usuarios.find_one({"nombre": name})
+        if not user:
+            return
+        user["_id"] = str(user["_id"])
+        return user
+#[{"alimento": "Salm\u00f3n", "porcion": "100 gramos", "calorias": 208.7}, {"alimento": "Quinoa", "porcion": "100 gramos", "calorias": 190.88}]
 class Comida:
+    TIPO_DESAYUNO=0
+    TIPO_COMIDA=1
+    TIPO_CENA=2
+
     def __init__(selfs):
         return
 
-    def create(self, platos,user):
+    def create(self, comida):
         #for plato in platos:
         #    Plato.create(plato['descripcion'],plato['calorias'])
-        comida = db.comidas.insert_one({
-            "platos": platos,
-            "user":user,
-            "timestamp":time.time()
-        })
+        comida = db.comidas.insert_one(comida)
         return self.get_by_id(comida.inserted_id)
 
     def get_by_id(self, comidaid):
@@ -80,3 +89,11 @@ class Comida:
             return {"caloriastotales":caloriastotales,"user":userid,"starttime":starttime,"endtime":endtime}
         except Exception as e:
             print("ERROR " + str(e))
+
+    def getAlexaNL(self,data):
+        #[{"alimento": "Salm\u00f3n", "porcion": "100 gramos", "calorias": 208.7}, {"alimento": "Quinoa", "porcion": "100 gramos", "calorias": 190.88}]
+        #aux=""
+        aux="Debes preparar "
+        for obj in data:
+            aux=aux+obj['porcion']+" de "+obj['alimento']+"."
+        return aux

@@ -1,13 +1,8 @@
-import base64
-import json
-
-import jwt, os
-from dotenv import load_dotenv
 from flask import Flask, request, jsonify
-
+from flask_cors import CORS
 
 app = Flask(__name__)
-
+import re
 from models import *
 
 
@@ -17,9 +12,18 @@ def hello():
                "message": "hello world"
            }, 200
 
+
+@app.route("/division/<numero1>/<numero2>",methods=["GET"])
+def division(numero1,numero2):
+    valor = int(numero1)/int(numero2)
+    print("valor es:",valor)
+    return ""+str(int(valor))
+
+
 @app.route("/user",methods=["POST"])
 def crearUsuario():
     data = request.json
+    print("DATOS:",data)
     if not data:
         return {
                    "mensaje": "No hay datos"
@@ -35,19 +39,74 @@ def crearUsuario():
                    "message": "Error creando al usuario"
                }, 500
 
-@app.route("/comida",methods=["POST"])
-def crearComida():
-    data = request.json
+@app.route("/user/<nombre>",methods=["GET"])
+def obtenerUsuario(nombre):
+    try:
+        if nombre is None:
+            return {
+               "mensaje": "Falta el nombre del usuario"
+           }, 400
+
+        user = Usuario().get_by_name(nombre)
+        if not user:
+            return {
+                       "mensaje": "Usuario no existente"
+                   }, 400
+        print("USER ",user)
+        datos = {}
+        datos['nombre'] = user['nombre']
+        datos['calorias']=user['calorias']
+        return datos
+        #datos['MetabolismoBasal']=user['MetabolismoBasal']
+
+    except:
+        return {
+                   "message": "Error al obtener el usuario"
+               }, 500
+
+
+def limpiarJSON(text):
+    #text = 'Entendido, José. Aquí te dejo una opción de desayuno de aproximadamente 658 calorías que puedes consumir para ayudarte a bajar de peso:```json{  "desayuno": [    {      "alimento": "Huevos revueltos con espinacas",      "porcion": "2 huevos",      "calorias": 200    },    {      "alimento": "Pan integral tostado con aguacate",      "porcion": "2 rebanadas de pan",      "calorias": 458    }  ]}```Este desayuno incluye huevos revueltos con espinacas, que son ricos en proteínas y fibra, y pan integral tostado con aguacate, que proporciona gras'
+    regex = "\```(.*?)\```"
+    result = re.findall(regex, text)
+    result = result[0]
+    result = result.replace("json", "")
+    result = result.replace("['", "").replace("']", "")
+    data = json.loads(result)
+    '''if "desayuno" in data:
+        return data['desayuno']
+    if "comida" in data:
+        return data['comida']
+    if "cena" in data:
+        return data['cena']'''
+    return data
+
+@app.route("/comida/<tipo>",methods=["POST"])
+def crearComida(tipo):
+    tipoaux=0
+    if "desayuno" in tipo.lower():
+        tipoaux =Comida.TIPO_DESAYUNO
+    elif "comida" in tipo.lower():
+        tipoaux = Comida.TIPO_COMIDA
+    else:
+        tipoaux=Comida.TIPO_CENA
+    data = request.data
     if not data:
         return {
                    "mensaje": "No hay datos"
                }, 400
-    user = Comida().create(**data)
-    if user:
-        return {
-            "mensaje": "Comida creada",
-            "datos": user
-        }
+    data = data.decode('UTF-8')
+    print("antes de limpiar:",data)
+    data = limpiarJSON(data)
+    print("después de limpia:",data)
+    #data = json.loads(data)
+    #data['tipo']=tipoaux
+    data['tipo']=tipoaux
+    data['timestamp']=time.time()
+    print("A ENTREGAR:",data)
+    comida = Comida().create(data)
+    if comida:
+        return comida
     else:
         return {
                    "message": "Error creando la comida"
@@ -99,4 +158,10 @@ def obtenerCalorias(nickname,starttime,endtime):
                }, 500
 
 if __name__ == "__main__":
-    app.run(debug=True,host='0.0.0.0', port=5002)
+    app.run(host='0.0.0.0', port=5002, debug=False)
+    import ssl
+
+    #context = ssl.SSLContext()
+    #context.load_cert_chain("/home/master/dev/plannutricional/diarionutricional/conversational_ugr_es.pem", "/home/master/dev/plannutricional/diarionutricional/conversational_ugr_es.key")
+    #CORS(app)
+    #app.run(host='0.0.0.0', port=5002, ssl_context=context, debug=False)
