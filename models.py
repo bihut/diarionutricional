@@ -94,6 +94,6 @@ class Comida:
         #[{"alimento": "Salm\u00f3n", "porcion": "100 gramos", "calorias": 208.7}, {"alimento": "Quinoa", "porcion": "100 gramos", "calorias": 190.88}]
         #aux=""
         aux="Debes preparar "
-        for obj in data:
-            aux=aux+obj['porcion']+" de "+obj['alimento']+"."
+        for obj in data['comida']:
+            aux=aux+obj['porcion']+" de "+obj['alimento']+". "
         return aux

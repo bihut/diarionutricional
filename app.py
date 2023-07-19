@@ -84,29 +84,35 @@ def limpiarJSON(text):
 @app.route("/comida/<tipo>",methods=["POST"])
 def crearComida(tipo):
     tipoaux=0
-    if "desayuno" in tipo.lower():
-        tipoaux =Comida.TIPO_DESAYUNO
-    elif "comida" in tipo.lower():
-        tipoaux = Comida.TIPO_COMIDA
-    else:
-        tipoaux=Comida.TIPO_CENA
+    if not tipo:
+        return {
+                   "mensaje": "Falta el tipo"
+               }, 400
     data = request.data
     if not data:
         return {
                    "mensaje": "No hay datos"
                }, 400
     data = data.decode('UTF-8')
-    print("antes de limpiar:",data)
     data = limpiarJSON(data)
-    print("después de limpia:",data)
-    #data = json.loads(data)
-    #data['tipo']=tipoaux
+    if "desayuno" in tipo.lower():
+        tipoaux =Comida.TIPO_DESAYUNO
+        data["comida"] = data.pop("desayuno")
+    elif "comida" in tipo.lower():
+        tipoaux = Comida.TIPO_COMIDA
+        data["comida"] = data.pop("comida")
+    else:
+        tipoaux=Comida.TIPO_CENA
+        data["comida"] = data.pop("cena")
+
+
+
+
     data['tipo']=tipoaux
     data['timestamp']=time.time()
-    print("A ENTREGAR:",data)
     comida = Comida().create(data)
     if comida:
-        return comida
+        return Comida().getAlexaNL(comida)
     else:
         return {
                    "message": "Error creando la comida"
