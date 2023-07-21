@@ -56,6 +56,7 @@ def obtenerUsuario(nombre):
         datos = {}
         datos['nombre'] = user['nombre']
         datos['calorias']=user['calorias']
+        datos['metabolismobasal'] = user['metabolismobasal']
         return datos
         #datos['MetabolismoBasal']=user['MetabolismoBasal']
 
