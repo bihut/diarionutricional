@@ -112,7 +112,9 @@ def crearComida(tipo):
     data['timestamp']=time.time()
     comida = Comida().create(data)
     if comida:
-        return Comida().getAlexaNL(comida)
+        respuesta = {}
+        respuesta['respuesta'] = Comida().getAlexaNL(comida)
+        return respuesta,200
     else:
         return {
                    "message": "Error creando la comida"
