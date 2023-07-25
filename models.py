@@ -93,7 +93,7 @@ class Comida:
     def getAlexaNL(self,data):
         #[{"alimento": "Salm\u00f3n", "porcion": "100 gramos", "calorias": 208.7}, {"alimento": "Quinoa", "porcion": "100 gramos", "calorias": 190.88}]
         #aux=""
-        aux="Debes preparar "
+        aux="Una opción puede ser preparar "
         for obj in data['comida']:
             aux=aux+obj['porcion']+" de "+obj['alimento']+". "
         return aux
