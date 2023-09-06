@@ -6,7 +6,7 @@
   },
   "servers": [
     {
-      "url": "https://conversational.ugr.es/master/api"
+      "url": "http://localhost:5002/api"
     }
   ],
   "components": {
@@ -94,7 +94,7 @@
         }
       }
     },
-    "/comida": {
+    "/comida/<tipo>": {
       "post": {
         "description": "Añadir comida",
         "requestBody": {
@@ -109,39 +109,6 @@
           },
           "500": {
             "description": "Error al crear la comida"
-          }
-        }
-      }
-    },
-    "/comida/{usernickname}/{starttime}/{endtime}": {
-      "get": {
-        "description": "Obtener las comidas de un usuario en un intervalo de tiempo",
-        "responses": {
-          "200": {
-            "description": "Lista de comidas"
-          },
-          "400": {
-            "description": "Datos de entrada incompletos"
-          },
-          "500": {
-            "description": "Error al obtener las comidas"
-          }
-        }
-      }
-    },
-    "/calorias/{usernickname}/{starttime}/{endtime}": {
-      "get": {
-        "description": "Obtener las calorias totales para un usuario en todas las comidas en un marco de tiempo",
-        "parameters": [ ],
-        "responses": {
-          "200": {
-            "description": "Total de calorias"
-          },
-          "400": {
-            "description": "Datos de entrada incompletos"
-          },
-          "500": {
-            "description": "Error al obtener las calorias"
           }
         }
       }

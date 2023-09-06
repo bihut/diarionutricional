@@ -14,11 +14,11 @@ def hello():
            }, 200
 
 
-@app.route("/division/<numero1>/<numero2>",methods=["GET"])
+'''@app.route("/division/<numero1>/<numero2>",methods=["GET"])
 def division(numero1,numero2):
     valor = int(numero1)/int(numero2)
     print("valor es:",valor)
-    return ""+str(int(valor))
+    return ""+str(int(valor))'''
 
 
 @app.route("/user",methods=["POST"])
@@ -120,7 +120,7 @@ def crearComida(tipo):
                    "message": "Error creando la comida"
                }, 500
 
-@app.route("/comida/<nickname>/<starttime>/<endtime>",methods=["GET"])
+'''@app.route("/comida/<nickname>/<starttime>/<endtime>",methods=["GET"])
 def obtenerComidas(nickname,starttime,endtime):
     try:
         if nickname is None or starttime is None or endtime is None:
@@ -163,7 +163,7 @@ def obtenerCalorias(nickname,starttime,endtime):
         print("ERROR "+str(e))
         return {
                    "message": "Error al obtener las calorias de "+str(nickname)
-               }, 500
+               }, 500'''
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5002, debug=False)
